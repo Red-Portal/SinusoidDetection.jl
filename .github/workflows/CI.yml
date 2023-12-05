@@ -35,7 +35,6 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - name: Configure test unregistered dependencies
-        shell: rm Manifest.toml
         shell: julia --project=. --color=yes {0}
         run: |
           using Pkg
