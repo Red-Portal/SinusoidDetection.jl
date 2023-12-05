@@ -86,7 +86,7 @@ end
 
 # ╔═╡ 3cdea5fa-a96d-4d39-af40-6b03bd4593c2
 begin
-    n_samples = 100000
+    n_samples = 2000
 	n_anneal  = 16
 
 	#model  = SinusoidUnknownSNR(y_sel, ν0, γ0,  α_δ², β_δ², prior)
