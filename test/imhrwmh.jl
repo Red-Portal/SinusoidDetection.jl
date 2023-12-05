@@ -36,7 +36,7 @@ end
     model      = @set model.model.y = y
 
     n_pvalue_samples = 32
-    n_samples        = 100
+    n_samples        = 1000
     n_mcmc_steps     = 10
     test             = TwoSampleTest(n_samples, n_mcmc_steps)
 
@@ -59,7 +59,7 @@ end
     model      = @set model.model.y = y
 
     n_pvalue_samples = 32
-    n_samples        = 100
+    n_samples        = 1000
     n_mcmc_steps     = 10
     test             = TwoSampleTest(n_samples, n_mcmc_steps)
 
