@@ -11,6 +11,7 @@ using Random
 using ReversibleJump
 using SimpleUnPack
 using SinusoidDetection
+using StableRNGs
 
 using Test
 

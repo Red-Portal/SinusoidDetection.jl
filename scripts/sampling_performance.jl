@@ -11,9 +11,11 @@ using DelimitedFiles
 using Statistics
 using SignalAnalysis
 
-function main()
-rand_sinusoids_unknownsnr(
-    rng, N, nu0, gamma0, alpha_delta2, beta_delta2,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
-)
+function 
+
+function main(rng::AbstractRNG)
+    k  = rand(rng, orderprior)
+    ω  = rand(rng, Uniform(0, π), k)
+    σ² = rand(rng, InverseGamma(nu0/2, gamma0/2))
+    y  = SinusoidDetection.sample_signal(rng, ω, N, σ², delta2)
 end

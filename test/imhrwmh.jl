@@ -28,22 +28,42 @@ end
     gamma0 = 5.0
     delta2 = 8.0
     N      = 16
+    k      = 1
+    prior  = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
 
-    k          = 1
-    prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
     model_base = rand_sinusoids_knownsnr(N, nu0, gamma0, delta2, prior, k)
+    mcmc       = IMHRWMHSinusoid(model_base)
     model      = SinusoidFixedOrderModel(k, model_base)
-    _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
-    model      = @set model.model.y = y
+    @testset "determinism" begin
+        n_mcmc_steps = 10
+        θ_init, _ = MCMCTesting.sample_joint(Random.default_rng(), model)
 
-    n_pvalue_samples = 32
-    n_samples        = 1000
-    n_mcmc_steps     = 10
-    test             = TwoSampleTest(n_samples, n_mcmc_steps)
+        rng = StableRNG(1)
+        θ   = copy(θ_init)
+        for i in 1:n_mcmc_steps
+           θ, _ = ReversibleJump.transition_mcmc(rng, mcmc, model_base, θ)
+        end
 
-    mcmc    = IMHRWMHSinusoid(model_base)
-    subject = TestSubject(model, mcmc)
-    @test seqmcmctest(test, subject, 0.0001, n_pvalue_samples; show_progress=true)
+        rng = StableRNG(1)
+        θ′  = copy(θ_init)
+        for i in 1:n_mcmc_steps
+           θ′, _ = ReversibleJump.transition_mcmc(rng, mcmc, model_base, θ′)
+        end
+        @test θ == θ′
+    end
+
+    @testset "inference" begin
+        _, y  = MCMCTesting.sample_joint(Random.default_rng(), model)
+        model′ = @set model.model.y = y
+
+        n_pvalue_samples = 32
+        n_samples        = 1000
+        n_mcmc_steps     = 10
+        test             = TwoSampleTest(n_samples, n_mcmc_steps)
+
+        subject = TestSubject(model′, mcmc)
+        @test seqmcmctest(test, subject, 0.0001, n_pvalue_samples; show_progress=true)
+    end
 end
 
 @testset "imhrwmh unknown snr" begin
@@ -59,15 +79,36 @@ end
     prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
     model_base = rand_sinusoids_unknownsnr(N, ν0, γ0, α_δ², β_δ², prior, k)
     model      = SinusoidFixedOrderModel(k, model_base)
-    _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
-    model      = @set model.model.y = y
+    mcmc       = IMHRWMHSinusoid(model_base)
 
-    n_pvalue_samples = 32
-    n_samples        = 1000
-    n_mcmc_steps     = 10
-    test             = TwoSampleTest(n_samples, n_mcmc_steps)
+    @testset "determinism" begin
+        n_mcmc_steps = 10
+        θ_init, y = MCMCTesting.sample_joint(Random.default_rng(), model)
 
-    mcmc    = IMHRWMHSinusoid(model_base)
-    subject = TestSubject(model, mcmc)
-    @test seqmcmctest(test, subject, 0.0001, n_pvalue_samples; show_progress=true)
+        rng = StableRNG(1)
+        θ   = copy(θ_init)
+        for i in 1:n_mcmc_steps
+           θ, _ = ReversibleJump.transition_mcmc(rng, mcmc, model_base, θ)
+        end
+
+        rng = StableRNG(1)
+        θ′  = copy(θ_init)
+        for i in 1:n_mcmc_steps
+           θ′, _ = ReversibleJump.transition_mcmc(rng, mcmc, model_base, θ′)
+        end
+        @test θ == θ′
+    end
+
+    @testset "inference" begin
+        _, y  = MCMCTesting.sample_joint(Random.default_rng(), model)
+        model′ = @set model.model.y = y
+
+        n_pvalue_samples = 32
+        n_samples        = 1000
+        n_mcmc_steps     = 10
+        test             = TwoSampleTest(n_samples, n_mcmc_steps)
+
+        subject = TestSubject(model′, mcmc)
+        @test seqmcmctest(test, subject, 0.0001, n_pvalue_samples; show_progress=true)
+    end
 end

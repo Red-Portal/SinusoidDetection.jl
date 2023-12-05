@@ -48,17 +48,40 @@ end
     jump   = AnnealedJumpProposal(T, prop, path)
     rjmcmc = ReversibleJumpMCMC(prior, jump, mcmc)
 
-    n_pvalue_samples = 32
-    n_rank_samples   = 100
-    n_mcmc_steps     = 10
-    n_mcmc_thin      = 1
-    test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
-    statistics       = θ -> [length(θ)]
+    @testset "determinism" begin
+        n_mcmc_steps = 10
+        θ_init, y = MCMCTesting.sample_joint(Random.default_rng(), model)
 
-    rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
-    subject = TestSubject(model, rjmcmc)
-    @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
-                      statistics, show_progress=true)
+        rng     = StableRNG(1)
+        samples = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        rng     = StableRNG(1)
+        samples′ = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        @test samples == samples′
+    end
+
+    @testset "inference" begin
+        n_pvalue_samples = 32
+        n_rank_samples   = 100
+        n_mcmc_steps     = 10
+        n_mcmc_thin      = 1
+        test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
+        statistics       = θ -> [length(θ)]
+
+        rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
+        subject = TestSubject(model, rjmcmc)
+        @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
+                          statistics, show_progress=true)
+    end
 end
 
 @testset "rjmcmc unknown SNR" begin
@@ -76,17 +99,40 @@ end
     jump   = IndepJumpProposal(prop)
     rjmcmc = ReversibleJumpMCMC(prior, jump, mcmc)
 
-    n_pvalue_samples = 32
-    n_rank_samples   = 100
-    n_mcmc_steps     = 10
-    n_mcmc_thin      = 1
-    test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
-    statistics       = θ -> [θ[1], length(θ)]
+    @testset "determinism" begin
+        n_mcmc_steps = 10
+        θ_init, y = MCMCTesting.sample_joint(Random.default_rng(), model)
 
-    rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
-    subject = TestSubject(model, rjmcmc)
-    @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
-                      statistics, show_progress=true)
+        rng     = StableRNG(1)
+        samples = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        rng     = StableRNG(1)
+        samples′ = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        @test samples == samples′
+    end
+
+    @testset "inference" begin
+        n_pvalue_samples = 32
+        n_rank_samples   = 100
+        n_mcmc_steps     = 10
+        n_mcmc_thin      = 1
+        test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
+        statistics       = θ -> [θ[1], length(θ)]
+
+        rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
+        subject = TestSubject(model, rjmcmc)
+        @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
+                          statistics, show_progress=true)
+    end
 end
 
 @testset "rjmcmc unknown SNR reparameterized" begin
@@ -106,15 +152,38 @@ end
     jump   = AnnealedJumpProposal(n_anneal, prop, path)
     rjmcmc = ReversibleJumpMCMC(prior, jump, mcmc)
 
-    n_pvalue_samples = 32
-    n_rank_samples   = 100
-    n_mcmc_steps     = 10
-    n_mcmc_thin      = 1
-    test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
-    statistics       = θ -> [θ[1], length(θ)]
+    @testset "determinism" begin
+        n_mcmc_steps = 10
+        θ_init, y = MCMCTesting.sample_joint(Random.default_rng(), model)
 
-    rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
-    subject = TestSubject(model, rjmcmc)
-    @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
-                      statistics, show_progress=true)
+        rng     = StableRNG(1)
+        samples = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        rng     = StableRNG(1)
+        samples′ = AbstractMCMC.sample(
+            rng, model, rjmcmc, 10; 
+            initial_params = copy(θ_init),
+            initial_order  = length(θ_init) - 1
+        )
+
+        @test samples == samples′
+    end
+
+    @testset "inference" begin
+        n_pvalue_samples = 32
+        n_rank_samples   = 100
+        n_mcmc_steps     = 10
+        n_mcmc_thin      = 1
+        test             = ExactRankTest(n_rank_samples, n_mcmc_steps, n_mcmc_thin)
+        statistics       = θ -> [θ[1], length(θ)]
+
+        rjmcmc  = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
+        subject = TestSubject(model, rjmcmc)
+        @test seqmcmctest(test, subject, 0.001, n_pvalue_samples;
+                          statistics, show_progress=true)
+    end
 end

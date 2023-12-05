@@ -91,7 +91,7 @@ function ReversibleJump.transition_mcmc(
         ω_idx_range = 2:length(θ)
         for ω_idx in ω_idx_range
             model_gibbs = GibbsObjective(target, ω_idx, θ)
-            ωi′, _ = if rand(Bernoulli(0.2))
+            ωi′, _ = if rand(rng, Bernoulli(0.2))
                 transition_imh(rng, model_gibbs, q_imh, θ[ω_idx])
             else
                 transition_rwmh(rng, model_gibbs, σ_rw, θ[ω_idx])
