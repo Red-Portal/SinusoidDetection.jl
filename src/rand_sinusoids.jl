@@ -1,9 +1,13 @@
 
 function rand_sinusoids_knownsnr(
-    rng::Random.AbstractRNG, N::Int, nu0::Real, gamma0::Real, delta2::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    rng       ::Random.AbstractRNG,
+    N         ::Int,
+    nu0       ::Real,
+    gamma0    ::Real,
+    delta2    ::Real,
+    orderprior::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k         ::Int                  = rand(rng, orderprior),
 )
-    k  = rand(rng, orderprior)
     ω  = rand(rng, Uniform(0, π), k)
     σ² = rand(rng, InverseGamma(nu0/2, gamma0/2))
     y  = sample_signal(rng, ω, N, σ², delta2)
@@ -11,10 +15,15 @@ function rand_sinusoids_knownsnr(
 end
 
 function rand_sinusoids_knownsnr(
-    N::Int, nu0::Real, gamma0::Real, delta2::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    N         ::Int,
+    nu0       ::Real,
+    gamma0    ::Real,
+    delta2    ::Real,
+    orderprior::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k         ::Int                  = rand(Random.default_rng(), orderprior)
 )
-    rand_sinusoids_knownsnr(Random.default_rng(), N, nu0, gamma0, delta2, orderprior)
+    rng = Random.default_rng()
+    rand_sinusoids_knownsnr(rng, N, nu0, gamma0, delta2, orderprior, k)
 end
 
 function rand_sinusoids_unknownsnr(
@@ -24,9 +33,9 @@ function rand_sinusoids_unknownsnr(
     gamma0      ::Real,
     alpha_delta2::Real,
     beta_delta2 ::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    orderprior  ::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k           ::Int                  = rand(rng, orderprior),
 )
-    k  = rand(rng, orderprior)
     ω  = rand(rng, Uniform(0, π), k)
     σ² = rand(rng, InverseGamma(nu0/2, gamma0/2))
     δ² = rand(rng, InverseGamma(alpha_delta2, beta_delta2))
@@ -41,7 +50,8 @@ function rand_sinusoids_unknownsnr(
     gamma0      ::Real,
     alpha_delta2::Real,
     beta_delta2 ::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    orderprior  ::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k           ::Int                  = rand(Random.default_rng(), orderprior),
 )
     rand_sinusoids_unknownsnr(
         Random.default_rng(),
@@ -50,7 +60,8 @@ function rand_sinusoids_unknownsnr(
         gamma0,
         alpha_delta2,
         beta_delta2,
-        orderprior
+        orderprior,
+        k
     )
 end
 
@@ -61,10 +72,11 @@ function rand_sinusoids_unknownsnr_reparam(
     gamma0      ::Real,
     alpha_delta2::Real,
     beta_delta2 ::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    orderprior  ::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k           ::Int                  = rand(rng, orderprior)
 )
     model_base = rand_sinusoids_unknownsnr(
-        rng, N, nu0, gamma0, alpha_delta2, beta_delta2, orderprior
+        rng, N, nu0, gamma0, alpha_delta2, beta_delta2, orderprior, k
     )
     SinusoidUnknownSNRReparam(
         model_base.y,
@@ -82,7 +94,8 @@ function rand_sinusoids_unknownsnr_reparam(
     gamma0      ::Real,
     alpha_delta2::Real,
     beta_delta2 ::Real,
-    orderprior = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    orderprior  ::DiscreteDistribution = truncated(Poisson(3), upper=floor(Int, (N-1)/2)),
+    k           ::Int                  = rand(Random.default_rng(), orderprior) 
 )
     rand_sinusoids_unknownsnr_reparam(
         Random.default_rng(),
@@ -91,6 +104,7 @@ function rand_sinusoids_unknownsnr_reparam(
         gamma0,
         alpha_delta2,
         beta_delta2,
-        orderprior
+        orderprior,
+        k
     )
 end
