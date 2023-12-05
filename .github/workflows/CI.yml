@@ -38,7 +38,7 @@ jobs:
         shell: julia --project=. --color=yes {0}
         run: |
           using Pkg
-          rm("Manifect.toml")
+          rm("Manifest.toml")
           Pkg.develop(url="https://github.com/Red-Portal/ReversibleJump.jl.git")
           Pkg.instantiate()
       - uses: julia-actions/cache@v1
