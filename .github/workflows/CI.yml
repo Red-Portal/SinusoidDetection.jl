@@ -21,7 +21,7 @@ jobs:
         version:
           - '1.6'
           - '1.9'
-          - 'nightly'
+          #- 'nightly' temporarily removing nightly due to build issues upstream
         os:
           - ubuntu-latest
           - macOS-latest
