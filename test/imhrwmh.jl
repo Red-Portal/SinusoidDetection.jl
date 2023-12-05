@@ -30,7 +30,8 @@ end
     N      = 16
 
     k          = 1
-    model_base = rand_sinusoids_knownsnr(N, nu0, gamma0, delta2)
+    prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    model_base = rand_sinusoids_knownsnr(N, nu0, gamma0, delta2, prior, k)
     model      = SinusoidFixedOrderModel(k, model_base)
     _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
     model      = @set model.model.y = y
@@ -46,14 +47,17 @@ end
 end
 
 @testset "imhrwmh unknown snr" begin
-    ν0   = 2.0
-    γ0   = 5.0
-    α_δ² = 2.0
+    ν0 = 2.0
+    γ0 = 5.0
+    N  = 16
+
+    # Due to numerical accuracy issues, the prior needs to be set carefully
+    α_δ² = 40.0
     β_δ² = 5.0
-    N    = 16
 
     k          = 1
-    model_base = rand_sinusoids_unknownsnr(N, ν0, γ0, α_δ², β_δ²)
+    prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    model_base = rand_sinusoids_unknownsnr(N, ν0, γ0, α_δ², β_δ², prior, k)
     model      = SinusoidFixedOrderModel(k, model_base)
     _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
     model      = @set model.model.y = y

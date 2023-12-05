@@ -17,8 +17,9 @@ end
     δ² = 8.0
     N  = 16
 
-    k          = 2
-    model_base = rand_sinusoids_knownsnr(N, ν0, γ0, δ²)
+    k          = 1
+    prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    model_base = rand_sinusoids_knownsnr(N, ν0, γ0, δ², prior, k)
     model      = SinusoidFixedOrderModel(k, model_base)
     _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
     model      = @set model.model.y = y
@@ -47,8 +48,9 @@ end
     β_δ² = 5.0
     N    = 16
 
-    k          = 2
-    model_base = rand_sinusoids_unknownsnr(N, ν0, γ0, α_δ², β_δ²)
+    k          = 1
+    prior      = truncated(Poisson(3), upper=floor(Int, (N-1)/2))
+    model_base = rand_sinusoids_unknownsnr(N, ν0, γ0, α_δ², β_δ², prior, k)
     model      = SinusoidFixedOrderModel(k, model_base)
     _, y       = MCMCTesting.sample_joint(Random.default_rng(), model)
     model      = @set model.model.y = y
