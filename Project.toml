@@ -1,0 +1,13 @@
+name = "SinusoidDetection"
+uuid = "45ba4d38-fe80-4d3f-a961-49dd0a258d23"
+authors = ["Kyurae Kim <kyrkim@seas.upenn.edu> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
