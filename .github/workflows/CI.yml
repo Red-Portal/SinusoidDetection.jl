@@ -19,7 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.0'
           - '1.6'
           - '1.9'
           - 'nightly'
@@ -36,6 +35,11 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v1
+      - name: Configure test unregistered dependencies
+        shell: julia --project=docs --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.add(url="https://github.com/Red-Portal/ReversibleJump.jl.git")
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
   docs:
