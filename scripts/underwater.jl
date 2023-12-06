@@ -25,8 +25,9 @@ begin
 
 	using Plots, StatsPlots
 	plotly()
-end
 
+	using RCall
+end
 
 # ╔═╡ 6c491d4d-d0e1-4593-95c8-cc92466cf590
 begin
@@ -87,7 +88,7 @@ end
 # ╔═╡ 3cdea5fa-a96d-4d39-af40-6b03bd4593c2
 begin
     n_samples = 2000
-	n_anneal  = 16
+	n_anneal  = 4
 
 	#model  = SinusoidUnknownSNR(y_sel, ν0, γ0,  α_δ², β_δ², prior)
 	#model  = SinusoidUnknownSNR(y_sel, ν0, γ0, α_δ², β_δ², prior)
@@ -114,6 +115,9 @@ begin
     )
 end
 
+# ╔═╡ b3c6bcc1-c4d7-4864-99b1-eb794bee527c
+
+
 # ╔═╡ f1de0d2e-3082-494d-a73f-3124c6245143
 begin
 	Plots.plot([stat.order for stat in stats])
@@ -129,6 +133,15 @@ begin
 	n_burn       = n_samples ÷ 2
 	samples_burn = samples[n_burn+1:end]
 	stats_burn   = stats[n_burn+1:end]
+end
+
+# ╔═╡ 8d8869ae-2aab-4b0b-aa89-d41b88a74012
+order_burn = [stat.order for stat in stats_burn]
+
+# ╔═╡ d2f004ff-197b-4722-bd17-eae20153a0e1
+begin
+    chain = MCMCChains.Chains(reshape(order_burn, (:,1,1)))
+	autocorplot(chain, maxlag=200)
 end
 
 # ╔═╡ f17f33e8-db45-4a1d-94a7-bfe0556d9804
@@ -166,10 +179,10 @@ end
 
 # ╔═╡ fec2c1ea-ca52-4b4a-b9d9-9ec56d2bfa6f
 begin
-	model_probs, _ = ReversibleJump.modelprob(stats_burn, prior)
+	mpost = ReversibleJump.modelposterior(stats_burn, prior)
 
-	Plots.stephist([stat.order for stat in stats_burn], bins=(0:k_max) .- 0.5, normed=true)
-	Plots.plot!((0:length(model_probs)-1) .- 0.5, line=:step, model_probs)
+	Plots.stephist([stat.order for stat in stats_burn], normed=true)
+	Plots.plot!(mpost, line=:step)
 end
 
 # ╔═╡ Cell order:
@@ -181,9 +194,12 @@ end
 # ╠═7c69aecb-2489-4cf0-9906-a1042535f5a5
 # ╠═e2a669a7-953a-4eeb-a410-6fe5dd092c50
 # ╠═3cdea5fa-a96d-4d39-af40-6b03bd4593c2
+# ╠═b3c6bcc1-c4d7-4864-99b1-eb794bee527c
 # ╠═f1de0d2e-3082-494d-a73f-3124c6245143
 # ╠═3ad96bb2-886d-43a6-a4c2-066dfb425046
 # ╠═e4de6326-0a3e-44e3-86e5-3a6bb8a5f257
+# ╠═8d8869ae-2aab-4b0b-aa89-d41b88a74012
+# ╠═d2f004ff-197b-4722-bd17-eae20153a0e1
 # ╠═f17f33e8-db45-4a1d-94a7-bfe0556d9804
 # ╠═f303d31b-7646-47af-8c5b-94e78377114d
 # ╠═983e6e1e-86b5-4a22-b004-0f9ef26dd93a
