@@ -96,7 +96,7 @@ function run_config(rng, config)
     a  = fill(σ²*sqrt(δ²), config.ntargets*2)
     y  = SinusoidDetection.sample_signal_fixed_amplitude(rng, ω, a, N, σ²)
 
-    n_burn    = 1000
+    n_burn    = 10000
     n_samples = 100000
     n_anneal  = 4
 
