@@ -41,7 +41,7 @@ function collapsed_likelihood(
         end
         try
             D    = spectrum_matrix(ω, N)
-            DᵀD  = PDMats.PDMat(Hermitian(D'*D))
+            DᵀD  = PDMats.PDMat(Hermitian(D'*D) + 1e-10*I)
             Dᵀy  = D'*y
             yᵀPy = dot(y, y) - δ²/(1 + δ²)*PDMats.invquad(DᵀD, Dᵀy)
             (N + ν0)/-2*log(γ0 + yᵀPy) - k*log(1 + δ²)
