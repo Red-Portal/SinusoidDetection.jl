@@ -23,6 +23,21 @@ StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
 
 [compat]
 AbstractMCMC = "5"
+Accessors = "0.1"
+Distributions = "0.25"
+FFTW = "1"
+FillArrays = "1"
+LinearAlgebra = "1"
+LoopVectorization = "0.12"
+MCMCTesting = "0.3"
+PDMats = "0.11"
+ProgressMeter = "1"
+Random = "1"
+ReversibleJump = "0.1.0"
+SimpleUnPack = "1"
+StableRNGs = "1"
+Statistics = "1"
+StatsFuns = "1"
 julia = "1.6"
 
 [extras]
