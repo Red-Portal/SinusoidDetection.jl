@@ -32,7 +32,7 @@ function ReversibleJump.logdensity(model::SinusoidUnknownSNR, θ)
     ω  = θ[2:end]
     k  = length(ω)
 
-    if δ² < eps(eltype(θ))
+    if δ² ≤ 0
         -Inf
     else
         ℓp_y  = collapsed_likelihood(y, ω, δ², nu0, gamma0)
