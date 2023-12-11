@@ -204,8 +204,8 @@ function slice_sampling_univariate(
             R = θ′
         end
 
-        if n_prop > 10000 
-            @error("Too many rejections. Something looks broken. \n θ = $(θ₀) \n ℓπ = $(ℓπ₀)")
+        if n_prop > 10^6
+            throw(ErrorException("Too many rejections. Something looks broken. \n θ = $(θ₀) \n ℓπ = $(ℓπ₀)"))
         end
     end
 end

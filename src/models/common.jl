@@ -41,7 +41,7 @@ function collapsed_likelihood(
         end
         try
             D    = spectrum_matrix(ω, N)
-            DᵀD  = PDMats.PDMat(Hermitian(D'*D + 1e-10*I))
+            DᵀD  = PDMats.PDMat(Hermitian(D'*D) + 1e-10*I)
             Dᵀy  = D'*y
             yᵀPy = dot(y, y) - δ²/(1 + δ²)*PDMats.invquad(DᵀD, Dᵀy)
             (N + ν0)/-2*log(γ0 + yᵀPy) - k*log(1 + δ²)
@@ -90,11 +90,27 @@ function sample_gibbs_snr(
 end
 
 function sample_signal(
-    rng::Random.AbstractRNG, ω::AbstractVector, N::Int, σ²::Real, δ²::Real
+    rng::Random.AbstractRNG,
+    ω  ::AbstractVector,
+    N  ::Int,
+    σ² ::Real,
+    δ² ::Real
 )
     D   = spectrum_matrix(ω, N)
     DᵀD = PDMats.PDMat(Hermitian(D'*D) + 1e-10*I)
     rand(rng, MvNormal(Zeros(N), σ²*(δ²*PDMats.X_invA_Xt(DᵀD, D) + I)))
+end
+
+function sample_signal_fixed_amplitude(
+    rng::Random.AbstractRNG,
+    ω  ::AbstractVector,
+    a  ::AbstractVector,
+    N  ::Int,
+    σ² ::Real,
+)
+    D = spectrum_matrix(ω, N)
+    ϵ = rand(rng, MvNormal(Zeros(N), sqrt(σ²)))
+    D*a + ϵ
 end
 
 function spectrum_energy_proposal(y::AbstractVector)

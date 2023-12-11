@@ -21,7 +21,7 @@ jobs:
         version:
           - '1.6'
           - '1.9'
-          #- 'nightly' temporarily removing nightly due to build issues upstream
+          - 'nightly'
         os:
           - ubuntu-latest
           - macOS-latest
@@ -38,10 +38,14 @@ jobs:
         shell: julia --project=. --color=yes {0}
         run: |
           using Pkg
-          Pkg.add(url="https://github.com/Red-Portal/ReversibleJump.jl.git")
+          Pkg.develop(url="https://github.com/Red-Portal/ReversibleJump.jl.git")
+          Pkg.instantiate()
       - uses: julia-actions/cache@v1
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+      - uses: codecov/codecov-action@v3
+        with:
+          files: lcov.info
   docs:
     name: Documentation
     runs-on: ubuntu-latest
@@ -53,6 +57,11 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: '1'
+      - name: Configure test unregistered dependencies
+        shell: julia --project=. --color=yes {0}
+        run: |
+          using Pkg
+          Pkg.develop(url="https://github.com/Red-Portal/ReversibleJump.jl.git")
       - name: Configure doc environment
         shell: julia --project=docs --color=yes {0}
         run: |
