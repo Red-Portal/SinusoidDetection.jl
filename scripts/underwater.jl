@@ -106,8 +106,8 @@ begin
 	initial_params = [log(10.0)]
     initial_order  = 0
 	
-    rjmcmc = ReversibleJump.NonReversibleJumpMCMC(jump, mcmc; jump_rate=0.9)
-    #rjmcmc = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
+    #rjmcmc = ReversibleJump.NonReversibleJumpMCMC(jump, mcmc; jump_rate=0.9)
+    rjmcmc = ReversibleJump.ReversibleJumpMCMC(prior, jump, mcmc)
 
     samples, stats = ReversibleJump.sample(
         rjmcmc, model, n_samples, initial_order, initial_params; show_progress=false
@@ -166,10 +166,10 @@ end
 
 # ╔═╡ fec2c1ea-ca52-4b4a-b9d9-9ec56d2bfa6f
 begin
-	model_probs, _ = ReversibleJump.modelprob(stats_burn, prior)
+	model_probs = ReversibleJump.modelposterior(stats_burn, prior)
 
 	Plots.stephist([stat.order for stat in stats_burn], bins=(0:k_max) .- 0.5, normed=true)
-	Plots.plot!((0:length(model_probs)-1) .- 0.5, line=:step, model_probs)
+	Plots.plot!(model_probs)
 end
 
 # ╔═╡ Cell order:
